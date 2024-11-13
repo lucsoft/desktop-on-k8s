@@ -1,0 +1,31 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: desktop-system
+  namespace: kube-system
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: "talos-6jp-a64" # Change to your node name, or any selector you want.
+  containers:
+    - image: ghcr.io/lucsoft/desktop-alpine-k8s
+      name: desktop
+      resources:
+        limits:
+          cpu: "2"
+          memory: "5Gi"
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: device-plugin
+          mountPath: /dev/tty0
+          subPath: tty0
+        - name: device-plugin
+          mountPath: /dev/input
+          subPath: input
+        - name: device-plugin
+          mountPath: /dev/dri
+          subPath: dri
+  volumes:
+    - name: device-plugin
+      hostPath:
+        path: /dev/
